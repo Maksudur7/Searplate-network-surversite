@@ -88,13 +88,13 @@ async function run() {
         app.get('/addFood', async (req, res) => {
             const filter = req.query
             console.log(filter)
-            const query = {}
-            const options = {
-                sort: {
-                    status: filter.sort === 'sorting' ? 1 : -1
-                }
-            }
-            const cursor = await productCollection.find(query, options).toArray()
+            // const query = {}
+            // const options = {
+            //     sort: {
+            //         status: filter.sort === 'sorting' ? 1 : -1
+            //     }
+            // }
+            const cursor = await productCollection.find().toArray()
             res.send(cursor)
         })
         app.get('/addFood/:id', async (req, res) => {
