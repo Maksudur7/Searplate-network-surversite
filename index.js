@@ -1,17 +1,17 @@
 const express = require('express')
 const cors = require('cors')
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000;
-
+const path = require('path');
 
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://assinment11-6b44f.web.app'
+        'https://searplatenetwork.web.app'
     ],
     credentials: true
 }))
@@ -20,7 +20,7 @@ app.use(cookieParser())
 
 
 
-const uri = `mongodb+srv://${process.env.DB_USERs}:${process.env.DB_PASSWORDs}@cluster0.gehw4nj.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.gehw4nj.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
     serverApi: {
@@ -35,21 +35,21 @@ const logger = (req, res, next) => {
     next();
 }
 
-const verifyToken = (req, res, next) => {
-    const token = req?.cookies?.token;
-    // console.log('token in the meddelware', token)
-    if (!token) {
-        return res.status(401).send({ massage: 'aunauthorized acccess' })
-    }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
-        if (error) {
-            return res.status(401).send({ massage: 'unatuhorized access' })
-        }
-        req.user = decoded
-        next()
-    })
+// const verifyToken = (req, res, next) => {
+//     const token = req?.cookies?.token;
+//     // console.log('token in the meddelware', token)
+//     if (!token) {
+//         return res.status(401).send({ massage: 'aunauthorized acccess' })
+//     }
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+//         if (error) {
+//             return res.status(401).send({ massage: 'unatuhorized access' })
+//         }
+//         req.user = decoded
+//         next()
+//     })
 
-}
+// }
 
 async function run() {
     try {
@@ -88,13 +88,13 @@ async function run() {
         app.get('/addFood', async (req, res) => {
             const filter = req.query
             console.log(filter)
-            // const query = {}
-            // const options = {
-            //     sort: {
-            //         status: filter.sort === 'sorting' ? 1 : -1
-            //     }
-            // }
-            const cursor = await productCollection.find().toArray()
+            const query = {}
+            const options = {
+                sort: {
+                    status: filter.sort === 'sorting' ? 1 : -1
+                }
+            }
+            const cursor = await productCollection.find(query, options).toArray()
             res.send(cursor)
         })
         app.get('/addFood/:id', async (req, res) => {
